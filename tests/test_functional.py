@@ -8,7 +8,7 @@ import inspect
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from tests.TestUtils import TestUtils
-import etl_job  # Your ETL module (must contain main function)
+import etl  # Your ETL module (must contain main function)
 
 class TestETLImplementation(unittest.TestCase):
     def setUp(self):
@@ -21,7 +21,7 @@ class TestETLImplementation(unittest.TestCase):
 
     def test_no_collect_used(self):
         try:
-            tree = self.get_ast_tree(etl_job.main)
+            tree = self.get_ast_tree(etl.main)
             collect_calls = [node for node in ast.walk(tree)
                              if isinstance(node, ast.Attribute) and node.attr == "collect"]
             result = len(collect_calls) == 0
@@ -34,7 +34,7 @@ class TestETLImplementation(unittest.TestCase):
 
     def test_uses_col_function(self):
         try:
-            tree = self.get_ast_tree(etl_job.main)
+            tree = self.get_ast_tree(etl.main)
             col_used = any(
                 isinstance(node, ast.Call)
                 and isinstance(node.func, ast.Name)
@@ -50,7 +50,7 @@ class TestETLImplementation(unittest.TestCase):
 
     def test_uses_filter_method(self):
         try:
-            tree = self.get_ast_tree(etl_job.main)
+            tree = self.get_ast_tree(etl.main)
             filter_used = any(
                 isinstance(node, ast.Attribute) and node.attr == "filter"
                 for node in ast.walk(tree)
